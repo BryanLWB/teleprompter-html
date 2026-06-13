@@ -1,0 +1,10 @@
+name: teleprompter-html
+
+services:
+  teleprompter-html:
+    build: .
+    image: teleprompter-html:latest
+    container_name: teleprompter-html
+    ports:
+      - "8123:80"
+    restart: unless-stopped

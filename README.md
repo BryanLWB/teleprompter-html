@@ -14,6 +14,22 @@
 
 直接打开 `config.html`，编辑台词并点击“打开展示页”。
 
+## Docker
+
+克隆仓库后可以直接用 Docker Compose 启动：
+
+```bash
+docker compose up --build
+```
+
+启动后访问：
+
+```text
+http://127.0.0.1:8123
+```
+
+Compose 项目名、镜像名和容器名都使用 `teleprompter-html`。
+
 也可以启动本地静态服务器：
 
 ```bash
@@ -31,6 +47,8 @@ http://127.0.0.1:8123/config.html
 - `index.html`：入口页，自动跳转到配置页
 - `config.html`：台词和播放参数配置页
 - `display.html`：全屏台词展示页
+- `Dockerfile`：静态站点镜像构建文件
+- `docker-compose.yml`：Docker Compose 启动配置
 
 ## 快捷操作
 
