@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>台词滚动器配置</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101114;
+      --panel: #17191f;
+      --panel-2: #20232b;
+      --line: #303541;
+      --text: #f4f6fb;
+      --muted: #a8afbd;
+      --accent: #6ee7b7;
+      --danger: #fb7185;
+      --radius: 8px;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background:
+        linear-gradient(180deg, rgba(110, 231, 183, 0.05), transparent 28rem),
+        var(--bg);
+      color: var(--text);
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      color: var(--text);
+      background: var(--panel-2);
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      border-color: #4a5263;
+      background: #262a34;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .primary {
+      border-color: transparent;
+      background: var(--accent);
+      color: #062016;
+      font-weight: 700;
+    }
+
+    .primary:hover {
+      border-color: transparent;
+      background: #86efc6;
+    }
+
+    .danger {
+      color: #ffe4e8;
+      border-color: rgba(251, 113, 133, 0.35);
+      background: rgba(251, 113, 133, 0.10);
+    }
+
+    .app {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 40px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .status {
+      min-width: 12ch;
+      color: var(--muted);
+      text-align: right;
+      font-size: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.65fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(23, 25, 31, 0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #dfe5ef;
+    }
+
+    .tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .editor {
+      display: block;
+      width: 100%;
+      min-height: calc(100dvh - 204px);
+      resize: vertical;
+      padding: 18px;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      background: #0d0f13;
+      line-height: 1.65;
+      font-size: 18px;
+    }
+
+    .side {
+      display: grid;
+      gap: 16px;
+    }
+
+    .form {
+      padding: 16px;
+      display: grid;
+      gap: 15px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #d8dee9;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .value {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    input[type="number"], input[type="color"], select {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--text);
+      background: #11141a;
+      padding: 8px 10px;
+    }
+
+    input[type="color"] {
+      padding: 3px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #11141a;
+      color: #d8dee9;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .check input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .actions .primary {
+      grid-column: 1 / -1;
+      min-height: 48px;
+      font-size: 16px;
+    }
+
+    .preview {
+      height: 260px;
+      overflow: hidden;
+      border-top: 1px solid var(--line);
+      background: var(--preview-bg, #050505);
+      color: var(--preview-color, #ffffff);
+      position: relative;
+    }
+
+    .preview::before,
+    .preview::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 62px;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .preview::before {
+      top: 0;
+      background: linear-gradient(var(--preview-bg, #050505), transparent);
+    }
+
+    .preview::after {
+      bottom: 0;
+      background: linear-gradient(transparent, var(--preview-bg, #050505));
+    }
+
+    .preview-text {
+      width: min(92%, 760px);
+      margin: 0 auto;
+      padding-top: 82px;
+      white-space: pre-wrap;
+      text-align: center;
+      transform-origin: center;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .editor {
+        min-height: 48dvh;
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .status {
+        text-align: left;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        width: min(100% - 20px, 1440px);
+        padding: 12px 0;
+      }
+
+      .row,
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .actions .primary {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>台词滚动器</h1>
+      <div class="status" id="saveStatus">已就绪</div>
+    </header>
+
+    <section class="layout" aria-label="配置台词滚动器">
+      <article class="panel">
+        <div class="panel-head">
+          <div class="panel-title">台词内容</div>
+          <div class="tools">
+            <button type="button" id="loadSample">载入示例</button>
+            <button type="button" id="clearText" class="danger">清空</button>
+          </div>
+        </div>
+        <textarea id="scriptInput" class="editor" spellcheck="false"></textarea>
+      </article>
+
+      <aside class="side">
+        <section class="panel">
+          <div class="panel-head">
+            <div class="panel-title">播放设置</div>
+          </div>
+          <div class="form">
+            <div class="field">
+              <label for="speed">滚动速度 <span class="value"><span id="speedValue"></span> px/s</span></label>
+              <input id="speed" type="range" min="10" max="180" step="1">
+            </div>
+
+            <div class="field">
+              <label for="fontSize">字号 <span class="value"><span id="fontSizeValue"></span> px</span></label>
+              <input id="fontSize" type="range" min="24" max="108" step="1">
+            </div>
+
+            <div class="field">
+              <label for="lineHeight">行距 <span class="value"><span id="lineHeightValue"></span></span></label>
+              <input id="lineHeight" type="range" min="1.05" max="2.2" step="0.05">
+            </div>
+
+            <div class="field">
+              <label for="contentWidth">文字宽度 <span class="value"><span id="contentWidthValue"></span>%</span></label>
+              <input id="contentWidth" type="range" min="48" max="96" step="1">
+            </div>
+
+            <div class="field">
+              <label for="startPosition">起始位置 <span class="value"><span id="startPositionValue"></span>%</span></label>
+              <input id="startPosition" type="range" min="15" max="100" step="1">
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label for="textColor">文字颜色</label>
+                <input id="textColor" type="color">
+              </div>
+              <div class="field">
+                <label for="bgColor">背景颜色</label>
+                <input id="bgColor" type="color">
+              </div>
+            </div>
+
+            <div class="row">
+              <label class="check"><input id="mirror" type="checkbox"> 镜像</label>
+              <label class="check"><input id="loop" type="checkbox"> 循环</label>
+            </div>
+
+            <div class="actions">
+              <button type="button" id="openDisplay" class="primary">打开展示页</button>
+              <button type="button" id="saveNow">保存配置</button>
+              <button type="button" id="resetConfig">重置参数</button>
+            </div>
+          </div>
+          <div class="preview" id="preview">
+            <div class="preview-text" id="previewText"></div>
+          </div>
+        </section>
+
+        <p class="hint">展示页打开后会接收这里的实时改动。浏览器若限制本地文件通信，使用“打开展示页”按钮生成的链接仍会带上当前配置。</p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "teleprompter.config.v1";
+    const CHANNEL_NAME = "teleprompter-live-v1";
+
+    const sampleText = `各位晚上好，欢迎来到今天的直播。
+
+我们先快速回顾三个重点：
+
+第一，开场要慢一点，给观众留出进入状态的时间。
+第二，转场前停顿半秒，让下一句更清楚。
+第三，结尾时看镜头，把感谢说完整。
+
+接下来进入正式内容。`;
+
+    const defaults = {
+      script: sampleText,
+      speed: 52,
+      fontSize: 52,
+      lineHeight: 1.45,
+      contentWidth: 78,
+      startPosition: 72,
+      textColor: "#ffffff",
+      bgColor: "#050505",
+      mirror: false,
+      loop: false
+    };
+
+    const controls = {
+      script: document.getElementById("scriptInput"),
+      speed: document.getElementById("speed"),
+      fontSize: document.getElementById("fontSize"),
+      lineHeight: document.getElementById("lineHeight"),
+      contentWidth: document.getElementById("contentWidth"),
+      startPosition: document.getElementById("startPosition"),
+      textColor: document.getElementById("textColor"),
+      bgColor: document.getElementById("bgColor"),
+      mirror: document.getElementById("mirror"),
+      loop: document.getElementById("loop")
+    };
+
+    const valueNodes = {
+      speed: document.getElementById("speedValue"),
+      fontSize: document.getElementById("fontSizeValue"),
+      lineHeight: document.getElementById("lineHeightValue"),
+      contentWidth: document.getElementById("contentWidthValue"),
+      startPosition: document.getElementById("startPositionValue")
+    };
+
+    const saveStatus = document.getElementById("saveStatus");
+    const preview = document.getElementById("preview");
+    const previewText = document.getElementById("previewText");
+    let displayWindow = null;
+    let statusTimer = 0;
+    let channel = null;
+
+    try {
+      channel = new BroadcastChannel(CHANNEL_NAME);
+    } catch (error) {
+      channel = null;
+    }
+
+    function encodeConfig(config) {
+      const json = JSON.stringify(config);
+      const bytes = new TextEncoder().encode(json);
+      let binary = "";
+      bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+      return btoa(binary);
+    }
+
+    function safeParseConfig(raw) {
+      try {
+        return { ...defaults, ...JSON.parse(raw) };
+      } catch (error) {
+        return { ...defaults };
+      }
+    }
+
+    function readStoredConfig() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? safeParseConfig(stored) : { ...defaults };
+      } catch (error) {
+        return { ...defaults };
+      }
+    }
+
+    function getConfig() {
+      return {
+        script: controls.script.value,
+        speed: Number(controls.speed.value),
+        fontSize: Number(controls.fontSize.value),
+        lineHeight: Number(controls.lineHeight.value),
+        contentWidth: Number(controls.contentWidth.value),
+        startPosition: Number(controls.startPosition.value),
+        textColor: controls.textColor.value,
+        bgColor: controls.bgColor.value,
+        mirror: controls.mirror.checked,
+        loop: controls.loop.checked
+      };
+    }
+
+    function setConfig(config) {
+      controls.script.value = config.script;
+      controls.speed.value = config.speed;
+      controls.fontSize.value = config.fontSize;
+      controls.lineHeight.value = config.lineHeight;
+      controls.contentWidth.value = config.contentWidth;
+      controls.startPosition.value = config.startPosition;
+      controls.textColor.value = config.textColor;
+      controls.bgColor.value = config.bgColor;
+      controls.mirror.checked = Boolean(config.mirror);
+      controls.loop.checked = Boolean(config.loop);
+      updatePreview();
+    }
+
+    function showStatus(text) {
+      clearTimeout(statusTimer);
+      saveStatus.textContent = text;
+      statusTimer = window.setTimeout(() => {
+        saveStatus.textContent = "已保存";
+      }, 1200);
+    }
+
+    function persist(config) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+      } catch (error) {
+        showStatus("本地保存受限");
+      }
+    }
+
+    function publish(config) {
+      persist(config);
+      if (channel) {
+        channel.postMessage({ type: "config", config });
+      }
+      if (displayWindow && !displayWindow.closed) {
+        displayWindow.postMessage({ type: "teleprompter-config", config }, "*");
+      }
+    }
+
+    function updatePreview() {
+      const config = getConfig();
+      valueNodes.speed.textContent = config.speed;
+      valueNodes.fontSize.textContent = config.fontSize;
+      valueNodes.lineHeight.textContent = config.lineHeight.toFixed(2);
+      valueNodes.contentWidth.textContent = config.contentWidth;
+      valueNodes.startPosition.textContent = config.startPosition;
+
+      preview.style.setProperty("--preview-bg", config.bgColor);
+      preview.style.setProperty("--preview-color", config.textColor);
+      previewText.textContent = config.script || " ";
+      previewText.style.fontSize = Math.max(18, Math.round(config.fontSize * 0.42)) + "px";
+      previewText.style.lineHeight = config.lineHeight;
+      previewText.style.width = config.contentWidth + "%";
+      previewText.style.transform = config.mirror ? "scaleX(-1)" : "none";
+    }
+
+    function handleChange() {
+      const config = getConfig();
+      updatePreview();
+      publish(config);
+      showStatus("同步中");
+    }
+
+    function openDisplay() {
+      const config = getConfig();
+      publish(config);
+      const hash = "#config=" + encodeConfig(config);
+      showStatus("正在进入展示页");
+      window.location.href = "display.html" + hash;
+    }
+
+    Object.values(controls).forEach((control) => {
+      control.addEventListener("input", handleChange);
+      control.addEventListener("change", handleChange);
+    });
+
+    document.getElementById("openDisplay").addEventListener("click", openDisplay);
+    document.getElementById("saveNow").addEventListener("click", () => {
+      publish(getConfig());
+      showStatus("已保存");
+    });
+    document.getElementById("loadSample").addEventListener("click", () => {
+      controls.script.value = sampleText;
+      handleChange();
+    });
+    document.getElementById("clearText").addEventListener("click", () => {
+      controls.script.value = "";
+      handleChange();
+    });
+    document.getElementById("resetConfig").addEventListener("click", () => {
+      setConfig({ ...defaults, script: controls.script.value || defaults.script });
+      handleChange();
+    });
+
+    setConfig(readStoredConfig());
+    publish(getConfig());
+  </script>
+</body>
+</html>
